@@ -8,18 +8,30 @@ use App\Http\Requests\UpdateJobRequest;
 use App\Http\Resources\JobCollection;
 use App\Http\Resources\JobResource;
 use App\Models\Job;
+use App\Services\JobFilterService;
 use App\Traits\ResponseApi;
+use GuzzleHttp\Psr7\Request;
 
 class JobController extends Controller
 {
     use ResponseApi;
+    
+    protected $jobFilterService;
+
+    public function __construct(JobFilterService $jobFilterService)
+    {
+        $this->jobFilterService = $jobFilterService;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $jobs = Job::with(['languages', 'locations', 'categories', 'jobAttributeValues'])->paginate(10);
-        return $this->responseSuccess('Jobs retrieved successfully', new JobCollection($jobs));
+        $filters = $request->query('filter', []);
+        $query = Job::query()->with(['languages', 'locations', 'categories', 'jobAttributeValues']);
+        $jobs = $this->jobFilterService->applyFilters($query, $filters);
+        return $this->responseSuccess('Jobs retrieved successfully', new JobCollection($jobs->paginate(10)));
     }
 
     /**
