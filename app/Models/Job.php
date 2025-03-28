@@ -33,10 +33,15 @@ class Job extends Model
     {
         return $this->belongsToMany(Language::class);
     }
+
+    public function locations()
+    {
+        return $this->belongsToMany(Location::class, 'job_location');
+    }
     
     public function categories()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'job_category');
     }
 
     public function jobAttributeValues()

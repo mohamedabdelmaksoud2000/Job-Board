@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\JobStatus;
 use App\Enums\JobType;
+use App\Rules\AttributeValueRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,10 +27,10 @@ class StoreJobRequest extends FormRequest
     {
         return [
             'title'         => ['required','string','max:255'],
-            'descrition'    => ['required','string'],
+            'description'    => ['required','string'],
             'company_name'  => ['required','string','max:255'],
             'salary_min'    => ['required','decimal:0,2'],
-            'salary_max'    => ['required','decimal:0,2','gta:salary_min'],
+            'salary_max'    => ['required','decimal:0,2','gt:salary_min'],
             'is_remote'     => ['required','boolean'],
             'job_type'      => ['required','string',Rule::enum(JobType::class)],
             'status'        => ['required','string',Rule::enum(JobStatus::class)],
@@ -41,8 +42,8 @@ class StoreJobRequest extends FormRequest
             'categories'    => ['required','array'],
             'categories.*'  => ['required','exists:categories,id'],
             'attributes'    => ['nullable','array'],
-            'attributes.*.id'  => ['required_if:attributes','exists:attributes,id'],
-            'attributes.*.value'  => ['required_if:attributes'],
+            'attributes.*.attribute_id'  => ['required_with:attributes','exists:attributes,id'],
+            'attributes.*.value'  => ['required_with:attributes',new AttributeValueRule()],
         ];
     }
 }

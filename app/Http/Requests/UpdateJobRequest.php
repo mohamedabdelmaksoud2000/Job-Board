@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\JobStatus;
 use App\Enums\JobType;
+use App\Rules\AttributeValueRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +27,7 @@ class UpdateJobRequest extends FormRequest
     {
         return [
             'title'         => ['required','string','max:255'],
-            'descrition'    => ['required','string'],
+            'description'    => ['required','string'],
             'company_name'  => ['required','string','max:255'],
             'salary_min'    => ['required','decimal:0,2'],
             'salary_max'    => ['required','decimal:0,2'],
@@ -37,11 +38,12 @@ class UpdateJobRequest extends FormRequest
             'languages'     => ['required','array'],
             'languages.*'   => ['required','exists:languages,id'],
             'locations'     => ['required','array'],
-            'locations.*'   => ['required','exists:;locations,id'],
+            'locations.*'   => ['required','exists:locations,id'],
             'categories'    => ['required','array'],
             'categories.*'  => ['required','exists:categories,id'],
             'attributes'    => ['nullable','array'],
-            'attributes.*'  => ['required_with:attributes','exists:attributes,id'],
+            'attributes.*.attribute_id'  => ['required_with:attributes','exists:attributes,id'],
+            'attributes.*.value'  => ['required_with:attributes',new AttributeValueRule()],
         ];
     }
 }

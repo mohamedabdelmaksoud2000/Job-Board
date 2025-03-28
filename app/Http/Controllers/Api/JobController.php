@@ -7,7 +7,6 @@ use App\Http\Requests\StoreJobRequest;
 use App\Http\Requests\UpdateJobRequest;
 use App\Http\Resources\JobCollection;
 use App\Http\Resources\JobResource;
-use App\Models\Attribute;
 use App\Models\Job;
 use App\Traits\ResponseApi;
 
@@ -19,7 +18,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        $jobs = Job::paginate(10);
+        $jobs = Job::with(['languages', 'locations', 'categories', 'jobAttributeValues'])->paginate(10);
         return $this->responseSuccess('Jobs retrieved successfully', new JobCollection($jobs));
     }
 
@@ -41,7 +40,7 @@ class JobController extends Controller
      */
     public function show(string $id)
     {
-        $job = Job::findOrFail($id);
+        $job = Job::with(['languages', 'locations', 'categories', 'jobAttributeValues'])->findOrFail($id);
         return $this->responseSuccess('Job retrieved successfully', new JobResource($job));
     }
 
@@ -55,7 +54,8 @@ class JobController extends Controller
         $job->languages()->sync($request->input('languages'));
         $job->locations()->sync($request->input('locations'));
         $job->categories()->sync($request->input('categories'));
-
+        $job->jobAttributeValues()->delete();
+        $job->jobAttributeValues()->createMany($request->input('attributes'));
         return $this->responseSuccess('Job updated successfully', new JobResource($job));   
     }
 
