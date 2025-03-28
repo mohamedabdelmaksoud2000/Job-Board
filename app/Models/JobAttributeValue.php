@@ -9,4 +9,21 @@ class JobAttributeValue extends Model
 {
     /** @use HasFactory<\Database\Factories\JobAttributeValueFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'job_id',
+        'attribute_id',
+        'value',
+    ];
+
+    public function attribute()
+    {
+        return $this->belongsTo(Attribute::class);
+    }
+
+    public function job()
+    {
+        return $this->belongsTo(Job::class);
+    }
+
 }

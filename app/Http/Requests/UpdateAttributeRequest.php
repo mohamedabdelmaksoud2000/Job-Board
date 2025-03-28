@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\AttributeType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateAttributeRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class UpdateAttributeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +24,9 @@ class UpdateAttributeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string', 'unique:attributes', 'max:255'],
+            'type' => ['required', 'string', Rule::enum(AttributeType::class)],
+            'options' => ['required_if:type,'.AttributeType::Select->value, 'array'],
         ];
     }
 }

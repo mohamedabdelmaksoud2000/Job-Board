@@ -39,4 +39,9 @@ class Job extends Model
         return $this->belongsToMany(Category::class);
     }
 
+    public function jobAttributeValues()
+    {
+        return $this->hasMany(JobAttributeValue::class);
+    }
+
 }   
