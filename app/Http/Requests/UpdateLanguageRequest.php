@@ -11,7 +11,7 @@ class UpdateLanguageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class UpdateLanguageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'  => ['required','unique:languages,name,'.$this->language,'string','max:255']
         ];
     }
 }

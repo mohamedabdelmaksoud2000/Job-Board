@@ -9,4 +9,16 @@ class Location extends Model
 {
     /** @use HasFactory<\Database\Factories\LocationFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'city',
+        'state',
+        'country'
+    ];
+
+    public function jobs()
+    {
+        return $this->belongsToMany(Job::class);
+    }
+
 }
